@@ -1,9 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-// import { pinoHttp } from 'pino-http';
 import dotenv from 'dotenv';
 
+import { getEnvVar } from './utils/getEnvVar.js';
 import contactsRouter from './routers/contacts.js';
+import { logger } from './middlewares/logger.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
 
@@ -11,15 +14,9 @@ export const setupServer = () => {
   const app = express();
 
   app.use(cors());
-  // app.use(express.json());
+  app.use(express.json());
 
-  // app.use(
-  //   pinoHttp({
-  //     transport: {
-  //       target: 'pino-pretty',
-  //     },
-  //   }),
-  // );
+  app.use(logger);
 
   app.get('/', (req, res) => {
     res.send('<h1>Home page</h1>');
@@ -27,12 +24,12 @@ export const setupServer = () => {
 
   app.use('/contacts', contactsRouter);
 
-  app.use((req, res) => {
-    // res.status(404).json({ message: `${req.url} Not found` });
-    res.status(404).json({ message: `Not found` });
-  });
+  app.use(notFoundHandler);
 
-  const port = Number(process.env.PORT) || 3000;
+  app.use(errorHandler);
+
+  // const port = Number(process.env.PORT) || 3000;
+  const port = Number(getEnvVar('PORT', 3000));
 
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
