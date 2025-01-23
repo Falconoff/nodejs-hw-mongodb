@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 import { getEnvVar } from './utils/getEnvVar.js';
 import contactsRouter from './routers/contacts.js';
-import { logger } from './middlewares/logger.js';
+// import { logger } from './middlewares/logger.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
@@ -16,7 +16,7 @@ export const setupServer = () => {
   app.use(cors());
   app.use(express.json());
 
-  app.use(logger);
+  // app.use(logger);
 
   app.get('/', (req, res) => {
     res.send('<h1>Home page</h1>');

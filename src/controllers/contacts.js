@@ -28,5 +28,41 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const addContactController = async (req, res) => {
-  console.log(req.body);
+  const newContact = await contactServices.createContact(req.body);
+
+  res.status(201).json({
+    status: 210,
+    message: 'Successfully created a contact!',
+    data: newContact,
+  });
+};
+
+export const patchContactController = async (req, res, next) => {
+  const { id } = req.params;
+
+  const result = await contactServices.updateContact(id, req.body);
+
+  if (!result) {
+    next(createError(404, 'Contact not found'));
+    return;
+  }
+
+  res.json({
+    status: 200,
+    message: `Successfully patched a contact!`,
+    data: result,
+  });
+};
+
+export const deleteContactController = async (req, res, next) => {
+  const { id } = req.params;
+
+  const deletedContact = await contactServices.deleteContact(id);
+
+  if (!deletedContact) {
+    next(createError(404, 'Contact not found'));
+    return;
+  }
+
+  res.status(204).send();
 };
