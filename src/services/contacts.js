@@ -15,6 +15,7 @@ export const updateContact = async (id, payload, options = {}) => {
     payload,
     {
       includeResultMetadata: true,
+      runValidators: true,
       ...options,
     },
   );
