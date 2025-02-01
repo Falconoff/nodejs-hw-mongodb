@@ -1,6 +1,32 @@
 import ContactCollection from '../db/models/Contact.js';
+import { calcPaginationData } from '../utils/calcPaginationData.js';
 
-export const getContacts = () => ContactCollection.find();
+export const getContacts = async ({
+  page = 1,
+  perPage = 5,
+  sortBy = '_id',
+  sortOrder = 'asc',
+}) => {
+  const limit = perPage;
+  const skip = (page - 1) * limit;
+  const data = await ContactCollection.find()
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder });
+
+  // загальна кількість записів
+  const totalItems = await ContactCollection.countDocuments();
+
+  const paginationData = calcPaginationData({ totalItems, page, perPage });
+
+  return {
+    data,
+    page,
+    perPage,
+    totalItems,
+    ...paginationData, //totalPages, hasNextPage, hasPrevPage,
+  };
+};
 
 export const getContactById = (id) => ContactCollection.findById(id);
 

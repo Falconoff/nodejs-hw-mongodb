@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-import { typeList } from '../../constants/contacts';
+import { typeList } from '../../constants/contacts.js';
 
 const contactSchema = new Schema(
   {
