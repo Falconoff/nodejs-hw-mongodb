@@ -6,16 +6,30 @@ export const getContacts = async ({
   perPage = 5,
   sortBy = '_id',
   sortOrder = 'asc',
+  filter = {},
 }) => {
   const limit = perPage;
   const skip = (page - 1) * limit;
-  const data = await ContactCollection.find()
+
+  const contactsQuery = ContactCollection.find();
+
+  if (filter.isFavourite) {
+    contactsQuery.where('isFavourite').equals(filter.isFavourite);
+  }
+
+  if (filter.contactType) {
+    contactsQuery.where('contactType').equals(filter.contactType);
+  }
+
+  const data = await contactsQuery
     .skip(skip)
     .limit(limit)
     .sort({ [sortBy]: sortOrder });
 
   // загальна кількість записів
-  const totalItems = await ContactCollection.countDocuments();
+  const totalItems = await ContactCollection.find()
+    .merge(contactsQuery)
+    .countDocuments();
 
   const paginationData = calcPaginationData({ totalItems, page, perPage });
 
