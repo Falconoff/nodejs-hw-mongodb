@@ -21,6 +21,7 @@ export const getContacts = async ({
     contactsQuery.where('contactType').equals(filter.contactType);
   }
 
+  /*
   const data = await contactsQuery
     .skip(skip)
     .limit(limit)
@@ -30,6 +31,17 @@ export const getContacts = async ({
   const totalItems = await ContactCollection.find()
     .merge(contactsQuery)
     .countDocuments();
+*/
+
+  /*Цей рефакторинг коду використовує підхід паралельної обробки запитів до бази даних за допомогою Promise.all, що дозволяє ефективніше використовувати ресурси і скоротити час відповіді сервера*/
+  const [totalItems, data] = await Promise.all([
+    ContactCollection.find().merge(contactsQuery).countDocuments(),
+    contactsQuery
+      .skip(skip)
+      .limit(limit)
+      .sort({ [sortBy]: sortOrder })
+      .exec(),
+  ]);
 
   const paginationData = calcPaginationData({ totalItems, page, perPage });
 
