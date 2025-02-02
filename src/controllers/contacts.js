@@ -6,11 +6,8 @@ import { parseSortParams } from '../utils/parseSortParams.js';
 import { sortByList } from '../constants/contacts.js';
 
 export const getContactsController = async (req, res) => {
-  // console.log(req.query);
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query, sortByList);
-  // console.log('perPage: ', perPage);
-  // console.log('page: ', page);
 
   const contacts = await contactServices.getContacts({
     page,
@@ -45,7 +42,7 @@ export const addContactController = async (req, res) => {
   const newContact = await contactServices.createContact(req.body);
 
   res.status(201).json({
-    status: 210,
+    status: 201,
     message: 'Successfully created a contact!',
     data: newContact,
   });
