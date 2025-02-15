@@ -1,6 +1,19 @@
 // import { refreshTokenValidUntil } from '../constants/users.js';
 import * as authServices from '../services/auth.js';
 
+const setupSession = (res, session) => {
+  // refreshToken, sessionId передаємо та зберігаємо в http-кукі
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+
+  res.cookie('sessionId', session.id, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+};
+
 export const registerController = async (req, res) => {
   const user = await authServices.register(req.body);
 
@@ -13,13 +26,9 @@ export const registerController = async (req, res) => {
 
 export const loginController = async (req, res) => {
   const session = await authServices.login(req.body);
-  // console.log(session);
 
-  // refreshToken передаємо та зберігаємо в http-кукі
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: session.refreshTokenValidUntil,
-  });
+  // refreshToken, sessionId передаємо та зберігаємо в http-кукі
+  setupSession(res, session);
 
   // a accessToken передаємо в тілі відповіді
   res.json({
@@ -29,4 +38,33 @@ export const loginController = async (req, res) => {
       accessToken: session.accessToken,
     },
   });
+};
+
+export const refreshTokenController = async (req, res) => {
+  const { refreshToken, sessionId } = req.cookies;
+  const session = await authServices.refreshToken({ refreshToken, sessionId });
+
+  // refreshToken, sessionId передаємо та зберігаємо в http-кукі
+  setupSession(res, session);
+
+  // a accessToken передаємо в тілі відповіді
+  res.json({
+    status: 200,
+    message: 'Successfully refreshed a session!',
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
+};
+
+export const logoutController = async (req, res) => {
+  if (req.cookies.sessionId) {
+    await authServices.logout(req.cookies.sessionId);
+  }
+
+  // чистимо кукі
+  res.clearCookie('refreshToken');
+  res.clearCookie('sessionId');
+
+  res.status(204).send();
 };
