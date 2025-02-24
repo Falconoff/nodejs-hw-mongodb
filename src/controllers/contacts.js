@@ -5,6 +5,9 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { sortByList } from '../constants/contacts.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToUploadsDir } from '../utils/saveFileToUploadsDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -45,10 +48,24 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const addContactController = async (req, res) => {
-  // console.log(req.user);
+  // console.log(req.body);
+  // console.log(req.file);
+  const isCloudinaryEnable = getEnvVar('CLOUDINARY_ENABLE') === 'true';
+  console.log('isCloudinaryEnable: ', isCloudinaryEnable);
+
+  let photo;
+  if (req.file) {
+    if (isCloudinaryEnable) {
+      photo = await saveFileToCloudinary(req.file);
+    } else {
+      photo = await saveFileToUploadsDir(req.file);
+    }
+  }
+
   const { _id: userId } = req.user;
   const newContact = await contactServices.createContact({
     ...req.body,
+    photo,
     userId,
   });
   res.status(201).json({
@@ -62,13 +79,27 @@ export const patchContactController = async (req, res, next) => {
   const { id: _id } = req.params;
   const { _id: userId } = req.user;
 
+  const isCloudinaryEnable = getEnvVar('CLOUDINARY_ENABLE') === 'true';
+  console.log('isCloudinaryEnable: ', isCloudinaryEnable);
+
+  let photo;
+  if (req.file) {
+    if (isCloudinaryEnable) {
+      photo = await saveFileToCloudinary(req.file);
+    } else {
+      photo = await saveFileToUploadsDir(req.file);
+    }
+  }
+
   const result = await contactServices.updateContact(
     { _id, userId },
     {
       ...req.body,
+      photo,
       userId,
     },
   );
+  console.log('result: ', result);
 
   if (!result) {
     throw createError(404, 'Contact not found');
