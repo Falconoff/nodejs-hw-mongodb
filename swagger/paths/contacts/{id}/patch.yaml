@@ -1,0 +1,74 @@
+tags:
+  - Contacts
+summary: Update contact
+operationId: patchContact
+description: 'Update a contact with payload'
+security:
+  - bearerAuth: []
+
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '65ca67e7ae7f10c88b598384'
+
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            description: "Contact's name"
+            type: string
+            example: 'John Doe'
+          phoneNumber:
+            description: "Contact's phone number"
+            type: string
+            example: '12345678'
+          email:
+            description: "Contact's email"
+            type: string
+            example: 'user@mail.com'
+          isFavourite:
+            description: 'Is Contact favourite'
+            type: boolean
+            example: false
+          contactType:
+            description: "Contact's type"
+            type: string
+            enum: ['work', 'home', 'personal']
+          userId:
+            description: "Contact's parent id"
+            type: string
+            example: 65e4decdd286b30065d54af9
+          photo:
+            description: "Link to Contact's photo"
+            type: string
+            example: https://res.cloudinary.com/di0erfgtg/image/upload/v1740433045/contacts/y9mpkkr3cwjxyas3qh45.jpg
+
+responses:
+  '201':
+    description: Update a contact
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully updated a contact!
+            data:
+              type: object
+              $ref: '../../../components/schemas/contact.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
