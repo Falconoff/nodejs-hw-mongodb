@@ -38,14 +38,11 @@ requestBody:
             type: string
             enum: ['work', 'home', 'personal']
             example: 'work'
-          userId:
-            description: "Contact's parent id"
-            type: string
-            example: 65e4decdd286b30065d54af9
           photo:
-            description: "Link to Contact's photo"
+            description: "Contact's photo"
             type: string
-            example: https://res.cloudinary.com/di0erfgtg/image/upload/v1740433045/contacts/y9mpkkr3cwjxyas3qh45.jpg
+            format: binary
+            # example: https://res.cloudinary.com/di0erfgtg/image/upload/v1740433045/contacts/y9mpkkr3cwjxyas3qh45.jpg
 
 responses:
   '201':

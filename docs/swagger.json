@@ -239,15 +239,10 @@
                     ],
                     "example": "work"
                   },
-                  "userId": {
-                    "description": "Contact's parent id",
-                    "type": "string",
-                    "example": "65e4decdd286b30065d54af9"
-                  },
                   "photo": {
-                    "description": "Link to Contact's photo",
+                    "description": "Contact's photo",
                     "type": "string",
-                    "example": "https://res.cloudinary.com/di0erfgtg/image/upload/v1740433045/contacts/y9mpkkr3cwjxyas3qh45.jpg"
+                    "format": "binary"
                   }
                 }
               }
@@ -407,15 +402,10 @@
                       "personal"
                     ]
                   },
-                  "userId": {
-                    "description": "Contact's parent id",
-                    "type": "string",
-                    "example": "65e4decdd286b30065d54af9"
-                  },
                   "photo": {
                     "description": "Link to Contact's photo",
                     "type": "string",
-                    "example": "https://res.cloudinary.com/di0erfgtg/image/upload/v1740433045/contacts/y9mpkkr3cwjxyas3qh45.jpg"
+                    "format": "binary"
                   }
                 }
               }
@@ -482,26 +472,10 @@
         ],
         "responses": {
           "204": {
-            "description": "Delete contact by id",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 204
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Delete contact by id"
           },
-          "401": {
-            "$ref": "#/components/responses/401"
+          "404": {
+            "$ref": "#/components/responses/404"
           }
         }
       }
@@ -604,6 +578,43 @@
                     "message": {
                       "type": "string",
                       "example": "Access token expired"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not found error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 404
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Contact not found"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Contact not found"
                     }
                   }
                 }
