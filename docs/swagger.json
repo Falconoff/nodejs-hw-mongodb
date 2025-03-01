@@ -46,9 +46,9 @@
             "in": "query",
             "name": "page",
             "schema": {
-              "type": "integer"
-            },
-            "example": 1
+              "type": "integer",
+              "example": 1
+            }
           },
           {
             "in": "query",
@@ -63,7 +63,15 @@
             "name": "sortBy",
             "schema": {
               "type": "string",
-              "example": "name"
+              "enum": [
+                "_id",
+                "name",
+                "phoneNumber",
+                "email",
+                "isFavourite",
+                "contactType"
+              ],
+              "example": "_id"
             },
             "description": "All contacts's fields can be mentioned. Default value - _id"
           },
@@ -98,35 +106,6 @@
                 "personal"
               ],
               "example": "work"
-            }
-          },
-          {
-            "in": "query",
-            "name": "minAge",
-            "schema": {
-              "type": "number",
-              "example": 10
-            }
-          },
-          {
-            "in": "query",
-            "name": "maxAge",
-            "schema": {
-              "type": "number",
-              "example": 16
-            }
-          },
-          {
-            "in": "query",
-            "name": "gender",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "male",
-                "female",
-                "other"
-              ],
-              "example": "male"
             }
           }
         ],
@@ -257,7 +236,8 @@
                       "work",
                       "home",
                       "personal"
-                    ]
+                    ],
+                    "example": "work"
                   },
                   "userId": {
                     "description": "Contact's parent id",
@@ -315,7 +295,7 @@
         "tags": [
           "Contacts"
         ],
-        "summary": "Get contacts by id",
+        "summary": "Get contact by id",
         "operationId": "getContact",
         "description": "Get contact by id",
         "security": [
@@ -578,10 +558,11 @@
               "work",
               "home",
               "personal"
-            ]
+            ],
+            "example": "work"
           },
           "userId": {
-            "description": "Contact's parent id",
+            "description": "User id",
             "type": "string",
             "example": "65e4decdd286b30065d54af9"
           },
